@@ -9,7 +9,7 @@ enable_testing()
 #----------------------------------
 # External Libs
 #----------------------------------
-set(ExternalLib1_path F:/CLibs/asio-1.18.1)
+set(ExternalLib1_path lib/asio/asio)
 add_library(asio 
     ${ExternalLib1_path}/include/asio.hpp
 )
