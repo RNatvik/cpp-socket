@@ -3,8 +3,8 @@ project(Socket VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include(CTest)
-enable_testing()
+#include(CTest)
+#enable_testing()
 
 #----------------------------------
 # External Libs
@@ -33,7 +33,13 @@ target_include_directories(
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 set_target_properties(${LibName1} PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(${LibName1} pthread asio ws2_32)
+target_link_libraries(${LibName1} pthread asio) # ws2_32
+IF (WIN32)
+    target_link_libraries(${LibName1} ws2_32)
+#ELSE()
+# set stuff for other systems
+ENDIF()
+
 
 #----------------------------------
 # Echo Server
@@ -57,6 +63,6 @@ target_include_directories(${ExeName2} PUBLIC include)
 target_link_libraries(${ExeName2} PUBLIC ${LibName1})
 
 
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-include(CPack)
+#set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+#set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+#include(CPack)
