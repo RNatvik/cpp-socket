@@ -1,38 +1,9 @@
 #include <UdpSocket.hpp>
 
 namespace soc {
-
-    void UdpSocket::receive() {
-        socket.async_receive_from(
-            asio::buffer(rxBuffer.data(), rxBuffer.size()),
-            rxRemoteEndpoint,
-            [this](std::error_code ec, std::size_t length) {
-                if (!ec) {
-                    std::string ip = rxRemoteEndpoint.address().to_string();
-                    int port = rxRemoteEndpoint.port();
-                    inboundHandler(rxBuffer, length, ip, port);
-                    receive();
-                }
-            }
-        );
-    }
-
-    void UdpSocket::transmit() {
-        socket.async_send_to(
-            asio::buffer(txQueue.front().bytes.data(), txQueue.front().bytes.size()),
-            txQueue.front().endpoint,
-            [this](std::error_code ec, std::size_t length) {
-                if (!ec) {
-                    txQueue.pop_front();
-                    if (!txQueue.empty()) {
-                        transmit();
-                    }
-                }
-            }
-        );
-    }
-
-
+    /*------------------------------------------------------------------------------
+    PUBLIC
+    ------------------------------------------------------------------------------*/
     UdpSocket::UdpSocket(std::function<void(std::vector<uint8_t>& buffer, std::size_t length, std::string ip, int port)> inboundHandler, std::string ip, int port)
         : socket(context), rxBuffer(5 * 1024) {
         this->inboundHandler = inboundHandler;
@@ -69,4 +40,42 @@ namespace soc {
             this->transmit();
         }
     }
+
+    std::string UdpSocket::getIP() { return this->socketIp; }
+    int UdpSocket::getPort() { return this->socketPort; }
+
+    /*------------------------------------------------------------------------------
+    PRIVATE
+    ------------------------------------------------------------------------------*/
+    void UdpSocket::receive() {
+        socket.async_receive_from(
+            asio::buffer(rxBuffer.data(), rxBuffer.size()),
+            rxRemoteEndpoint,
+            [this](std::error_code ec, std::size_t length) {
+                if (!ec) {
+                    std::string ip = rxRemoteEndpoint.address().to_string();
+                    int port = rxRemoteEndpoint.port();
+                    inboundHandler(rxBuffer, length, ip, port);
+                    receive();
+                }
+            }
+        );
+    }
+
+    void UdpSocket::transmit() {
+        socket.async_send_to(
+            asio::buffer(txQueue.front().bytes.data(), txQueue.front().bytes.size()),
+            txQueue.front().endpoint,
+            [this](std::error_code ec, std::size_t length) {
+                if (!ec) {
+                    txQueue.pop_front();
+                    if (!txQueue.empty()) {
+                        transmit();
+                    }
+                }
+            }
+        );
+    }
+
+
 }

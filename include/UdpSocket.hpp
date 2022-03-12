@@ -45,6 +45,8 @@ namespace soc {
         void start();
         void stop();
         void send(std::string ip, int port, std::vector<uint8_t> bytes);
+        std::string getIP();
+        int getPort();
     };
 }
 
