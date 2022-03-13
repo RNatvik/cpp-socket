@@ -38,7 +38,6 @@ namespace soc {
 
         std::function<void(std::vector<uint8_t>& buffer, std::size_t length, std::string ip, int port)> inboundHandler;
         std::function<bool(std::error_code ec, std::string ip, int port)> errorHandler;
-        void attachErrorHandler(std::function<bool(std::error_code ec, std::string ip, int port)> errorHandler);
         void receive();
         void transmit();
 
@@ -47,6 +46,7 @@ namespace soc {
         void start();
         void stop();
         void send(std::string ip, int port, std::vector<uint8_t> bytes);
+        void attachErrorHandler(std::function<bool(std::error_code ec, std::string ip, int port)> errorHandler);
         std::string getIP();
         int getPort();
     };
