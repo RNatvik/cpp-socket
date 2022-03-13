@@ -66,7 +66,7 @@ namespace soc {
                 else {
                     runReceive = this->errorHandler(ec, ip, port);
                 }
-                receive();
+                if (runReceive) receive();
             }
         );
     }
