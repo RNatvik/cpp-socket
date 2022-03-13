@@ -37,6 +37,8 @@ namespace soc {
         TSQueue<TxMessage> txQueue;
 
         std::function<void(std::vector<uint8_t>& buffer, std::size_t length, std::string ip, int port)> inboundHandler;
+        std::function<bool(std::error_code ec, std::string ip, int port)> errorHandler;
+        void attachErrorHandler(std::function<bool(std::error_code ec, std::string ip, int port)> errorHandler);
         void receive();
         void transmit();
 
