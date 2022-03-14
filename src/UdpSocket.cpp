@@ -7,7 +7,7 @@ namespace soc {
     UdpSocket::UdpSocket(std::function<void(std::vector<uint8_t>& buffer, std::size_t length, std::string ip, int port)> inboundHandler, std::string ip, int port)
         : socket(context), rxBuffer(5 * 1024) {
         this->inboundHandler = inboundHandler;
-        this->errorHandler = [this] (std::error_code ec, std::string ip, int port) {return true;};
+        this->errorHandler = [this](std::error_code ec, std::string ip, int port) {return true;};
         this->socketIp = ip;
         this->socketPort = port;
     }
@@ -16,12 +16,14 @@ namespace soc {
         asio::io_context::work idleWork(context);
         this->contextThread = std::thread([this]() { context.run(); });
         this->socket.open(asio::ip::udp::v4());
-        this->socket.bind(
-            asio::ip::udp::endpoint(
-                asio::ip::make_address(this->socketIp),
-                this->socketPort
-            )
-        );
+        if (this->socketPort != -1) {
+            this->socket.bind(
+                asio::ip::udp::endpoint(
+                    asio::ip::make_address(this->socketIp),
+                    this->socketPort
+                )
+            );
+        }
         this->receive();
     }
 

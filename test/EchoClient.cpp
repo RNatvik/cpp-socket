@@ -1,6 +1,10 @@
 #include <UdpSocket.hpp>
 #include <iostream>
+#include <chrono>
 
+int64_t timestamp() {
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
 
 class EchoClient {
 private:
@@ -32,12 +36,19 @@ public:
 
 
 int main() {
-    EchoClient client("127.0.0.1", 6970);
+    EchoClient client("127.0.0.1", -1);
     client.start();
 
-    std::string message = "Hello!";
-    std::vector<uint8_t> buffer(message.begin(), message.end());
-    client.send("127.0.0.1", 6969, buffer);
+    // std::string message = "Hello!";
+    // std::vector<uint8_t> buffer(message.begin(), message.end());
+
+    int64_t ts = timestamp();
+    uint8_t *ptr = (uint8_t*)&ts;
+    std::vector<uint8_t> buffer;
+    for (int i = 0; i < sizeof(ts); i++) {
+        buffer.push_back(ptr[i]);
+    }
+    client.send("192.168.1.153", 6969, buffer);
 
     // 1 second delay before client shutdown
     using namespace std::chrono_literals;

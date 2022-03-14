@@ -42,7 +42,7 @@ namespace soc {
         void transmit();
 
     public:
-        UdpSocket(std::function<void(std::vector<uint8_t>& buffer, std::size_t length, std::string ip, int port)> inboundHandler, std::string ip, int port);
+        UdpSocket(std::function<void(std::vector<uint8_t>& buffer, std::size_t length, std::string ip, int port)> inboundHandler, std::string ip, int port=-1);
         void start();
         void stop();
         void send(std::string ip, int port, std::vector<uint8_t> bytes);
